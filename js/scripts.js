@@ -29,7 +29,49 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 })
 
+const routes = {
+    '/': {
+        title: "Anasayfa",
+        template: "anasayfa"
+    },
+    '/hakkimda': {
+        title: "Hakkımda",
+        template: "hakkimda"
+    },
+    '/iletisim': {
+        title: "İletişim",
+        template: "iletisim"
+    },
+    '/postDetay': {
+        title: "Post Detay",
+        template: "postDetay"
+    },
+    '/404': {
+        title: "Sayfa Bulunamadı",
+        template: "404"
+    }
+}
+
+const pageSuffix = ' | Blog'
 const pagePosts = document.querySelector(".posts");
+
+async function loadData() {
+    let url = location.hash.substring(1);
+    if(url.length < 1)  {
+        url = '/';
+    }
+
+    const route = routes[url] || routes['/404'];
+    document.title = route.title + pageSuffix;
+    pagePosts.innerHTML = await fetch(`/assets/templates/${route.template}.html`).then(x => x.text())
+    posts = await fetch('http://localhost:1337/api/posts/').then(x => x.json())
+    users = await fetch(requestUsers).then(x => x.json())
+    render()
+}
+
+loadData();
+addEventListener("hashchange", loadData)
+
 const detailPost = document.querySelector("postDetail")
 const postPreview = document.querySelector(".postPreview");
 const urlPrefix = 'https://jsonplaceholder.org/';
@@ -41,11 +83,11 @@ const body = document.querySelector("body")
 let posts = [];
 let users = [];
 
-async function loadData() {
-    posts = await fetch('http://localhost:1337/api/posts/').then(x => x.json())
-    users = await fetch(requestUsers).then(x => x.json())
-    render()
-}
+// async function loadData() {
+//     posts = await fetch('http://localhost:1337/api/posts/').then(x => x.json())
+//     users = await fetch(requestUsers).then(x => x.json())
+//     render()
+// }
 
 function render() {
     for (const post of posts.data) {
@@ -74,24 +116,24 @@ function renderDetailPost(postDetail, postComment) {
     //         <h5>${x.comment}</h5>
     //     </div>
     // `)
+    document.title = 
     body.innerHTML = `
     <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
-        <div class="container px-4 px-lg-5">
-            <a class="navbar-brand" href="index.html">Start Bootstrap</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                Menu
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ms-auto py-4 py-lg-0">
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="about.html">About</a></li>
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="post.html">Sample Post</a></li>
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="contact.html">Contact</a></li>
-                </ul>
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="#/">Anasayfa</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="#/hakkimda">Hakkımda</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="#/iletisim">İletişim</a></li>
+                    </ul>
+                </div>
             </div>
-        </div>
     </nav>
     <!-- Page Header-->
     <header class="masthead" style="background-image: url('assets/img/post-bg.jpg')">
@@ -123,7 +165,7 @@ function renderDetailPost(postDetail, postComment) {
             <div class="comments">
                 <p>${postComment.data.attributes.comment}</p>
             </div>
-          
+            
         </div>
     </article>
     <!-- Footer-->
@@ -171,6 +213,10 @@ function bindClick() {
 
 }
 
+function pageContact() {
+    body.innerHTML=""
+}
+
 async function postClick(e) {
     e.preventDefault();
     await pageDetail(e.target.parentElement.parentElement.dataset.id)
@@ -183,13 +229,10 @@ async function pageDetail(postId) {
     const postComment = await fetch('http://localhost:1337/api/commets/' + postId).then(x => x.json());
     console.log(postComment);
     renderDetailPost(postDetail, postComment)
-    console.log(urlDetailPost + postId);
-    // https://jsonplaceholder.org/comments?postId=1
-    // console.log(postComment)
-    
+    console.log(urlDetailPost + postId);    
    
 }
 
-loadData()
+
 
 

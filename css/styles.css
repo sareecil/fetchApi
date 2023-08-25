@@ -10759,7 +10759,7 @@ header.masthead .post-heading .meta a {
 
 .comments {
   border: 1px solid gray;
-  padding: 52px;
+  padding: 42px;
   margin-top: 100px;
   margin-bottom: 50px;
 }
@@ -10771,6 +10771,9 @@ header.masthead .post-heading .meta a {
   margin: 0;
   padding: 0.625rem;
   text-align: center;
+}
+.post-preview{
+  border-bottom:1px solid lightgray ;
 }
 
 .post-preview > a {
